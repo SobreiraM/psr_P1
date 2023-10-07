@@ -1,0 +1,64 @@
+#############################   NOTES   #############################
+
+# usage: main.py [-h] [-utm] [-mv MAX_VALUE]
+
+# Arguments:
+#  -h, --help            show this help message and exit
+#  -utm, --use_time_mode
+#                        Max number of secs for time mode or maximum number of inputs for number of inputs mode.
+#  -mv MAX_VALUE, --max_value MAX_VALUE
+#                        Max number of seconds for time mode or maximum number of inputs for number of inputs mode.
+# -uw, --use_words
+#                       Use word typing mode, instead of single character typing.
+
+#############################   IMPORTING FUNCTIONS   #############################
+
+#!/usr/bin/env python3
+
+# Importing functions and packages
+import argparse
+import readchar
+
+from colorama import Fore, Back, Style
+
+
+#############################   DEFINING FUNCTIONS   #############################
+
+
+# This function collects the program inputs that will be needed to define the test model and duration
+def init():
+    
+    # Argparse function for input collection
+    parser = argparse.ArgumentParser(description=' Script for typing test')                                   # Description of the argparse function application
+    parser.add_argument('-utm' , '-mv', '-uw' , '--maximum_number', type=int, help='-h', required=True)       # Initializing the argparse function
+
+    # Initialization of the test variables
+    args = vars(parser.parse_args())
+    args['-utm'] = print('What is the maximum duration of the test?')                                         # Asking for the test maximum duration
+    args['-mv'] = print('What is the maximum number of questions?')                                           # Asking for the test maximum number of questions
+    args['-uw'] = print('Will the test be word typing mode (wm) or single character typing mode (sm)?')       # Asking for the test mode
+
+    # To start the test, a key other than the space button must be pressed
+    print('Press a key to start the test.')     # Asking for a key to be pressed
+    key = readchar.readkey()                    # Reading the key
+    numberChar = ord(key)                       # Turning the key to it's ASCII equivalent
+
+    #Checks if the key is different than the space bar and, if so, starts the test
+    if numberChar != 32:                        # Checking if the key is not the space bar
+       print('The test will start')
+       Run = True                               # Returning positive feedback
+       return Run
+    else:
+       Run = False                              # Returning negative feedback if the key is the space bar
+       return Run
+
+
+#############################   MAIN   #############################
+
+if __name__ == "__main__":
+  # Initialization of the Run variable, that commands wheather the program should, or not, work
+  Run = True
+
+  while Run == True:    #The program only runs if the Run variable is true
+    # Main code of the program where the functions are called 
+    init()
