@@ -85,8 +85,8 @@ def  Tempo_Letras(segundos):
                 
                 if key_pressed == key_requested:
                         print('You typed letter ' + Fore.GREEN + key_pressed + Style.RESET_ALL)
-                        hit.append(key_pressed)
-                        time_hit.append(time())
+                        hit.append(key_pressed) #nao pode ser feito assim, tem q se usar namedtuple... ver linha 35-42
+                        time_hit.append(time()) #nao pode ser feito assim, tem q se usar namedtuple... ver linha 35-42
                 else:
                         print('You typed letter ' + Fore.RED + key_pressed + Style.RESET_ALL)
                         miss.append(key_pressed)
@@ -107,12 +107,12 @@ def  Inputs_Letras(max_letras):
                 
                 if key_pressed == key_requested:
                         print('You typed letter ' + Fore.GREEN + key_pressed + Style.RESET_ALL)
-                        hit.append(key_pressed)
-                        time_hit.append(time())
+                        hit.append(key_pressed) #nao pode ser feito assim, tem q se usar namedtuple... ver linha 35-42
+                        time_hit.append(time()) #nao pode ser feito assim, tem q se usar namedtuple... ver linha 35-42
                 else:
                         print('You typed letter ' + Fore.RED + key_pressed + Style.RESET_ALL)
-                        miss.append(key_pressed)
-                        time_miss.append(time())
+                        miss.append(key_pressed) #nao pode ser feito assim, tem q se usar namedtuple... ver linha 35-42
+                        time_miss.append(time()) #nao pode ser feito assim, tem q se usar namedtuple... ver linha 35-42
                 
                 n_letras += 1
         
