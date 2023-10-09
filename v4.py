@@ -20,56 +20,11 @@ from colorama import Fore, Back, Style
 Input = namedtuple('Input', ['requested', 'received', 'duration'])
 inputs = []
 
+# Global variables
+global word_n
+global words
+
 ######################      FUNCTIONS      ######################  
-
-######## STATISTIC FUNCTIONS
-
-# Function to processo data and generate statistics
-def Statistics(t_start, t_end):
-        
-        # Variable initialization
-        n_hits = 0                  # Number of hits
-        thad = 0                    # Avarage duration of a correct try
-        tmad = 0                    # Avarage duration of a miss try
-        duration = t_end - t_start  # Duration of the typing test
-        
-        # Cycle to count the number os correct and wrong answers
-        for input in inputs:
-                
-                if input[0] == input[1]: # in case input requested is equal to input received
-                        n_hits += 1
-                        thad += input[2]
-
-                else:                    # in case input requested is different to input received
-                        tmad += input[2]
-        
-        accuracy = n_hits / len(inputs) * 100 # Accuracy calculation
-           
-        tad = (thad + tmad) / len(inputs)  # Avarage duration of any type of answer
-        
-        if n_hits == len(inputs): # In case the user gets everything wright, avoids division by 0
-                tmad = 0
-
-        else:
-                tmad = tmad / (len(inputs) - n_hits)
-                
-        if n_hits == 0:  # In case the user gets everything wrong, avoids division by 0
-                thad = 0
-
-        else:
-                thad = thad / n_hits   # Avarage duration of wright answers
-        
-        start = datetime.fromtimestamp(t_start).strftime("%A, %B %d, %Y %I:%M:%S") # Timestamp for the beginning
-        end = datetime.fromtimestamp(t_end).strftime("%A, %B %d, %Y %I:%M:%S")     # Timestamp for the end
-        
-        # Data registry input
-        data = {'accuracy': accuracy, 'inputs': inputs, 'number_of_hits': n_hits, 'number_of_types': len(inputs),
-                'test_duration': duration, 'test_end' : end, 'test_start': start,
-                'type_average_duration' : tad, 'type_hit_average_duration' : thad, 'type_miss_average_duration':tmad}
-    
-        # Printing data
-        pprint(data)
-        sys.exit()
 
 ######## LETTER MODE FUNCTIONS
 
@@ -123,14 +78,11 @@ def GenerateLetter():
 
     return key_pressed, key_requested                               
 
+
 ######## WORD MODE FUNCTIONS
 
 # Function to generate words from a text, in a logical order and check if the user introduces them correctly
 def GenerateWords(numwords):
-
-    # Global variables
-    global word_n
-    global words
 
     with open('The zen of python - Tim Peters.txt', 'r', encoding='utf-8') as textfile: # Opening the txt file in 'read' mode
             text = textfile.read()              # Funtion to read txt file
@@ -142,11 +94,11 @@ def GenerateWords(numwords):
         word_n = int(words.index(randomword))   # Returns the index from the random word in the list
 
         letters_word = list(randomword)         # Divides the word in a letter list
-        print(word_n)
+        
     else:
         
         word_n += 1                            # The index of the word is now the index of the next word
-        print(word_n)
+
         
         if word_n < len(words) - 1:            # Makes sure the word is not the last word in the text
             randomword = words[word_n]         # Increments the word index so that there is a logic evolution of the sentence
@@ -163,17 +115,19 @@ def GenerateWords(numwords):
     word_pressed = ''
 
     while len(word_pressed) < len(letters_word):    # Stops reading when the word being typed and the word show have the same number of letters
-            
         letter = readchar.readkey()              # Reads keys (letters) being typed
+
         word_pressed += letter                   # Adds new letters to the word being typed
         print (letter, end = '' , flush = True)  # Shows the user what they are typing
 
     t_deliver = time()                               # End of time duration for input
 
-    n_pressedletters = len(letters_word == list(word_pressed)) # Number of letters that are both in the given word and in the word pressed
+    #if len(word_pressed) == len(letters_word):
+     #   n_pressedletters = len(letters_word == list(word_pressed)) # Number of letters that are both in the given word and in the word pressed
+      #  n_lettersword = len(letters_word) # Total number of letters in the given word
 
-    inputs.append(Input(randomword, word_pressed, t_deliver - t_request, n_pressedletters))   #Appending the data to the dictionary
-    return word_pressed, randomword, n_pressedletters  
+    inputs.append(Input(randomword, word_pressed, t_deliver - t_request))#, n_pressedletters))   #Appending the data to the dictionary
+    return word_pressed, randomword #, n_pressedletters, n_lettersword
 
 
 # 'Test duration' mode for word typing test
@@ -234,6 +188,57 @@ def  Inputs_Words(max_words):
         print(str(numwords) + ' inputs submitted when the maximum was ' + str(max_words))
         Statistics(t_start, t_end)
                        
+
+######## STATISTIC FUNCTIONS
+
+# Function to processo data and generate statistics
+def Statistics(t_start, t_end):
+        
+        # Variable initialization
+        n_hits = 0                  # Number of hits
+        thad = 0                    # Avarage duration of a correct try
+        tmad = 0                    # Avarage duration of a miss try
+        duration = t_end - t_start  # Duration of the typing test
+        
+        # Cycle to count the number os correct and wrong answers
+        for input in inputs:
+                
+                if input[0] == input[1]: # in case input requested is equal to input received
+                        n_hits += 1
+                        thad += input[2]
+
+                else:                    # in case input requested is different to input received
+                        tmad += input[2]
+        
+        accuracy = n_hits / len(inputs) * 100 # Accuracy calculation
+           
+        tad = (thad + tmad) / len(inputs)  # Avarage duration of any type of answer
+        
+        if n_hits == len(inputs): # In case the user gets everything wright, avoids division by 0
+                tmad = 0
+
+        else:
+                tmad = tmad / (len(inputs) - n_hits)
+                
+        if n_hits == 0:  # In case the user gets everything wrong, avoids division by 0
+                thad = 0
+
+        else:
+                thad = thad / n_hits   # Avarage duration of wright answers
+        
+        start = datetime.fromtimestamp(t_start).strftime("%A, %B %d, %Y %I:%M:%S") # Timestamp for the beginning
+        end = datetime.fromtimestamp(t_end).strftime("%A, %B %d, %Y %I:%M:%S")     # Timestamp for the end
+        
+        # Data registry input
+        data = {'accuracy': accuracy, 'inputs': inputs, 'number_of_hits': n_hits, 'number_of_types': len(inputs),
+                'test_duration': duration, 'test_end' : end, 'test_start': start,
+                'type_average_duration' : tad, 'type_hit_average_duration' : thad, 'type_miss_average_duration':tmad}
+    
+        # Printing data
+        pprint(data)
+        sys.exit()
+
+
 ######## MAIN FUNCTION
 
 def main():
@@ -242,7 +247,7 @@ def main():
         # python3 main.py -utm 3 -mv 3 -wl word 
     
         parser = argparse.ArgumentParser(description='Typing test')
-        parser.add_argument('-utm','--use_time_mode', help='Max number of seconds for the test.', action="store_true") 
+        parser.add_argument('-utm','--use_time_mode', help='Use time mode for the test.', action="store_true") 
         parser.add_argument('-mv','--maximum_value',type=int, help='Max number of inputs or seconds for the test', required=True)
         parser.add_argument ('-wl', '--word_letter', type=str, help='Word mode or letter mode',required=True)
         
@@ -262,7 +267,7 @@ def main():
                         Time_Letters(args['maximum_value'])
                         
                 else:
-                        sys.exit("Bad inputs")
+                        sys.exit("Word/Letter expected. Invalid option.")
                         
         else:
                 print("Calling Input")
@@ -278,7 +283,8 @@ def main():
                 else:
                         sys.exit("Bad inputs")      
 
+
 ######################      MAIN CODE      ######################   
 
 if __name__ == '__main__':
-    main()
+      main()
