@@ -70,8 +70,14 @@ def GenerateLetter():
     print('Type letter ' + Fore.BLUE + key_requested + Style.RESET_ALL)
     t_request = time()                                                          #usado para calcular a duração de cada input
     key_pressed = readchar.readkey()
-    t_deliver = time()                                                          #usado para calcular a duração de cada input                                      
-    inputs.append(Input(key_requested, key_pressed, t_deliver - t_request))
+    t_deliver = time()                                                          #usado para calcular a duração de cada input 
+
+    if(key_pressed == key_requested):
+            hit = 1
+    else:
+            hit = 0
+            
+    inputs.append(Input(key_requested, key_pressed, t_deliver - t_request), hit)
 
     return key_pressed, key_requested                               
 
