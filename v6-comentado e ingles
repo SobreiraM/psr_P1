@@ -1,0 +1,309 @@
+#!/usr/bin/env python3
+# Shebang line
+
+######################      IMPORT MODULES      ######################
+
+import random
+import readchar
+from time import time, ctime
+from datetime import datetime
+import sys
+from pprint import pprint
+import argparse
+from collections import namedtuple
+from math import sqrt
+import colorama 
+from colorama import Fore, Back, Style
+
+######################      GLOBAL VARIABLES      ######################      
+
+Input = namedtuple('Input', ['requested', 'received', 'duration', 'correct_letters'])
+inputs = []
+
+
+######################      FUNCTIONS      ######################  
+
+######## LETTER MODE FUNCTIONS
+
+
+# Function to generate letters and check if the user introduces them correctly
+def GenerateLetter():
+
+    num = random.randint(97,122)                                                 # Chooses a random number from the ASCII table
+    key_requested = chr(num)                                                     # Transforms int to char
+
+    print('Type letter ' + Fore.BLUE + key_requested + Style.RESET_ALL)          # Asks user for input
+
+    t_request = time()                                                          
+    key_pressed = readchar.readkey()
+    t_deliver = time()                                                           # Calculates de duration of each input
+
+    if(key_pressed == key_requested):                                            # Records how many tries were hits and misses
+            hit = 1
+    else:
+            hit = 0
+            
+    inputs.append(Input(key_requested, key_pressed, t_deliver - t_request), hit) # Appends data
+
+    return key_pressed, key_requested                               
+
+
+# 'Test duration' mode for word typing test
+def Time_Letters(segundos):
+        
+    t_start = time()
+    duration = t_start + segundos        
+        
+    while time() < duration:  # Until the maximum time limit is reached, the program runs
+
+        inputs, key_pressed, key_requested = GenerateLetter()
+
+        if key_pressed == key_requested:     # When the word pressed corresponds to the word given prints the answer in green
+            print('You typed letter ' + Fore.GREEN + key_pressed + Style.RESET_ALL) 
+
+        else:       # When the letter pressed is not the given letter and prints the answer in red
+            print('You typed letter ' + Fore.RED + key_pressed + Style.RESET_ALL)
+                        
+    t_end = time()
+    print('Current test duration (' + Fore.CYAN + (str(t_end - t_start)) + Style.RESET_ALL + ") exceeds maximum of " + str(segundos))
+    Statistics(t_start, t_end)
+
+
+# 'Maximum number of inputs' mode for letter typing test
+def  Inputs_Letters(max_letters):
+        
+    t_start = time()
+    n_letters = 0
+
+    while n_letters < max_letters: # While the number of letters printed is not the max number of letter the program runs
+
+            key_pressed, key_requested = GenerateLetter()
+
+            if key_pressed == key_requested:    # When the word pressed corresponds to the word given prints the answer in green
+                    print('You typed letter ' + Fore.GREEN + key_pressed + Style.RESET_ALL)
+
+            else:       # When the letter pressed is not the given letter and prints the answer in red
+                    print('You typed letter ' + Fore.RED + key_pressed + Style.RESET_ALL)
+            
+            n_letters += 1
+    
+    t_end = time()
+
+    # Ends the typing test and prints statistics
+    print(str(n_letters) + ' inputs submitted when the maximum was ' + str(max_letters))
+    Statistics(t_start, t_end)
+        
+
+######## WORD MODE FUNCTIONS
+
+# Function to generate words from a text, in a logical order and check if the user introduces them correctly
+def GenerateWords(numwords):
+
+    # Global variables
+    global word_n
+    global words
+
+
+    with open('The zen of python - Tim Peters.txt', 'r', encoding='utf-8') as textfile: # Opening the txt file in 'read' mode
+        text = textfile.read()                  # Funtion to read txt file
+
+    if numwords == 0:                           # For the first word in the typing test
+
+        words = text.split()                    # Splits the text in a word list
+        randomword = random.choice(words)       # Chooses a random letter from the word list
+        word_n = int(words.index(randomword))   # Returns the index from the random word in the list
+
+        letters_word = list(randomword)          # Divides the word in a letter list
+        
+    else:
+        
+        word_n += 1                              # The index of the word is now the index of the next word
+
+        
+        if word_n < len(words) - 1:              # Makes sure the word is not the last word in the text
+            randomword = words[word_n]           # Increments the word index so that there is a logic evolution of the sentence
+            letters_word = list(randomword)    
+
+        else:                                    # If the last word was the last word in the txt, generates a new random word
+            randomword = random.choice(words)       
+            word_n = words.index(randomword)        
+            letters_word = list(randomword)         
+
+    print('Type ' + randomword + Fore.BLUE + Style.RESET_ALL)   # Giving the new word
+
+    t_request = time()                           # Time duration
+    word_pressed = ''
+
+    while len(word_pressed) < len(letters_word): # Stops reading when the word being typed and the word show have the same number of letters
+        letter = readchar.readkey()              # Reads keys (letters) being typed
+
+        word_pressed += letter                   # Adds new letters to the word being typed
+        print (letter, end = '' , flush = True)  # Shows the user what they are typing
+
+    t_deliver = time()                           # End of time duration for input
+
+    equal_letters = 0                            # Will count equal letters
+    for letter in randomword:
+        if letter in word_pressed:
+            equal_letters += 1
+
+    inputs.append(Input(randomword, word_pressed, t_deliver - t_request, equal_letters))   #Appending the data to the dictionary
+    return word_pressed, randomword
+
+
+# 'Test duration' mode for word typing test
+def Time_Words(seconds):
+    
+    # Initializing variables
+    t_start = time()
+    duration = t_start + seconds
+    numwords = 0      
+
+    while time() < duration:                                    # The typing test should only work until the time is up
+
+        word_pressed, randomword = GenerateWords(numwords)      # Calling GenerateWords() function
+
+        if word_pressed == randomword:                          # When the word pressed corresponds to the word given prints the answer in green
+
+            print('')
+            print('You typed ' + Fore.GREEN + word_pressed + Style.RESET_ALL)  
+
+        else:                                                   # When the word pressed is not the word given prints the answer in red
+    
+            print('')
+            print('You typed ' + Fore.RED + word_pressed + Style.RESET_ALL)
+                    
+        numwords += 1                                           # Increments word index
+
+    t_end = time()
+
+    # Ends the typing test and prints statistics
+    print('Current test duration (' + Fore.CYAN + (str(t_end - t_start)) + Style.RESET_ALL + ") exceeds maximum of " + str(seconds))
+    Statistics(t_start, t_end)
+
+
+# 'Maximum number of inputs' mode for word typing test
+def  Inputs_Words(max_words):
+        
+    t_start = time()
+    numwords = 0
+
+    while numwords < max_words: # The test runs until the max number of words is met
+
+        word_pressed, randomword = GenerateWords(numwords)
+
+        if word_pressed == randomword:          # When the word pressed corresponds to the word given prints the answer in green
+
+            print('')
+            print('You typed letter ' + Fore.GREEN + word_pressed + Style.RESET_ALL)
+
+        else:                                   # When the word pressed is not the word given prints the answer in red
+
+            print('')
+            print('You typed letter ' + Fore.RED + word_pressed + Style.RESET_ALL)
+
+        numwords += 1
+    
+    t_end = time()
+
+    # Ends the typing test and prints statistics
+    print(str(numwords) + ' inputs submitted when the maximum was ' + str(max_words))
+    Statistics(t_start, t_end)
+                       
+
+######## STATISTIC FUNCTIONS
+
+# Function to processo data and generate statistics
+def Statistics(t_start, t_end):
+        
+    # Variable initialization
+    n_hits = 0                  # Number of hits
+    thad = 0                    # Avarage duration of a correct try
+    tmad = 0                    # Avarage duration of a miss try
+    duration = t_end - t_start  # Duration of the typing test
+    
+    # Cycle to count the number of correct and wrong answers
+    for input in inputs:
+            
+        if input[0] == input[1]: # in case input requested is equal to input received
+            n_hits += 1
+            thad += input[2]
+
+        else:                    # in case input requested is different to input received
+            tmad += input[2]
+    
+    accuracy = n_hits / len(inputs) * 100 # Accuracy calculation
+        
+    tad = (thad + tmad) / len(inputs)  # Average duration of any type of answer
+    
+    if n_hits == len(inputs): # In case the user gets everything right, avoids division by 0
+        tmad = 0
+
+    else:
+        tmad = tmad / (len(inputs) - n_hits)
+            
+    if n_hits == 0:  # In case the user gets everything wrong, avoids division by 0
+        thad = 0
+
+    else:
+        thad = thad / n_hits   # Avarage duration of right answers
+              
+    
+    start = datetime.fromtimestamp(t_start).strftime("%A, %B %d, %Y %I:%M:%S") # Timestamp for the beginning
+    end = datetime.fromtimestamp(t_end).strftime("%A, %B %d, %Y %I:%M:%S")     # Timestamp for the end
+    
+    # Data registry input
+    data = {'accuracy': accuracy, 'inputs': inputs, 'number_of_hits': n_hits, 'number_of_types': len(inputs),
+        'test_duration': duration, 'test_end' : end, 'test_start': start,
+        'type_average_duration' : tad, 'type_hit_average_duration' : thad, 'type_miss_average_duration':tmad}
+
+    # Printing data
+    pprint(data)
+    sys.exit()
+
+
+######## MAIN FUNCTION
+
+# Main funtion defines the order, logic and conditions behind the sequence each function is called in
+def main():
+    
+    # Argparse desctription and arguments
+    parser = argparse.ArgumentParser(description='Typing test')
+
+    parser.add_argument('-utm','--use_time_mode', help='Use time mode for the test.', action="store_true") 
+    parser.add_argument('-mv','--maximum_value',type=int, help='Max number of inputs or seconds for the test', required=True)
+    parser.add_argument ('-uw', '--use_word_mode', help='Use word mode for the test', action="store_true")
+    
+    args = vars(parser.parse_args()) # Creates a dictionary
+
+    #check parameters 
+    
+    if args['use_time_mode']:                   # Runs 'time mode' typing test
+        print("Calling time mode")                                                      #debug, tirar quando n for necessário 
+
+        if args['use_word_mode']:               # Runs 'word mode' type of test
+            print('calling word mode')                                                  #debug, tirar quando n for necessário 
+            Time_Words(args['maximum_value'])
+                
+        else:                                   # Runs 'letter mode' type of test
+            print('calling letter mode')                                                #debug, tirar quando n for necessário 
+            Time_Letters(args['maximum_value'])
+
+                    
+    else:                                       # Runs 'maximum input mode' typing test
+        print("Calling Input")                                                          #debug, tirar quando n for necessário 
+            
+        if args['use_word_mode']:               # Runs 'word mode' type of test
+            print('calling word mode')                                                  #debug, tirar quando n for necessário 
+            Inputs_Words(args['maximum_value'])
+                    
+        else:                                   # Runs 'letter mode' type of test
+            print('calling letter mode')                                                #debug, tirar quando n for necessário 
+            Inputs_Letters(args['maximum_value'])
+                    
+
+######################      MAIN CODE      ######################   
+
+# Main program body, calls main function
+if __name__ == '__main__':
+      main()
