@@ -1,0 +1,23 @@
+É preciso adicionar nos imports:
+
+#import json
+
+Colocar no final da função Statistics
+
+# Data registry input
+data = {'accuracy': accuracy, 'inputs': inputs, 'number_of_hits': n_hits, 'number_of_types': len(inputs),
+    'test_duration': duration, 'test_end' : end, 'test_start': start,
+    'type_average_duration' : tad, 'type_hit_average_duration' : thad, 'type_miss_average_duration':tmad}
+
+# Historic save file
+historic = open('historico.txt', 'a') #Open the file historico.txt and save report
+historic.write('Duração do teste: ')
+json.dump(data['test_duration'], historic) #convert dictionary data into str
+historic.write(' Pontuação: ')
+json.dump(data['accuracy'], historic) #convert dictionary data into str
+historic.write('\n')
+historic.close
+
+# Printing data
+pprint(data)
+sys.exit()
