@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # Shebang line
 
-
 # PSR Typing Test - Universidade de Aveiro - 23/24
 # Miguel Sobreira - 110045
+# Ricardo Baptista - 40170
+
 ######################      IMPORT MODULES      ######################
 
 import random
