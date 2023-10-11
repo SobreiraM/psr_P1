@@ -2,6 +2,7 @@
 # Shebang line
 
 # PSR Typing Test - Universidade de Aveiro - 23/24
+# Maria Rodrigues - 102384
 # Miguel Sobreira - 110045
 # Ricardo Baptista - 40170
 
