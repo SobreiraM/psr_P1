@@ -1,0 +1,7 @@
+else:
+        #print( Back.GREEN + 'Starting the test!' + Style.RESET_ALL)
+        for i in range(1,4):
+            print( Back.GREEN + 'Starting the test in '+ str(4-i) +' seconds' + Style.RESET_ALL, end="\r")
+            #print( 'Starting the test in '+ str(4-i) +' seconds', end="\r")
+            sleep(1)
+            print("\033[K", end="\r" )
