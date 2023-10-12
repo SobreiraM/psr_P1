@@ -1,8 +1,14 @@
 Typing test Grupo 5 - P1 PSR
+
 PSR Typing Test - Universidade de Aveiro - 23/24
+
 Maria Rodrigues - 102384
+
 Miguel Sobreira - 110045
+
 Ricardo Baptista - 40170
+
+
 
 A versão final do trabalho encontra-se na pasta 'Versao_Final'.
 Os restantes ficheiros correspondem a trabalho que foi realizado em ordem a obter a versão final e versões antigas.
